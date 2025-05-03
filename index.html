@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soloo Menu V1</title>
+
+  <!-- Nunito Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-KK44bWnAYoZxP2+NLOOkJrcULq2OCHUP6z1AzafF5n0XvhBAm+uU7OqA0N+PYyVgBKP+ZTeWcAKUSt8ghPMowA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    body {
+      background: #1e1e2f;
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      color: white;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .menu-container {
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2c2c3e;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+      width: 250px;
+      user-select: none;
+      text-align: center;
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      cursor: grab;
+    }
+
+    .menu-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .fps-counter {
+      font-size: 14px;
+      margin-top: 5px;
+      color: #FFD700;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+      color: #ff5c5c;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .menu button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease, background 0.5s ease, box-shadow 0.3s ease;
+      background-size: 400%;
+    }
+
+    .menu button:hover {
+      transform: scale(1.1);
+      background-image: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+      animation: rainbow 3s linear infinite;
+      background-size: 400%;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes rainbow {
+      0% { background-position: 0% }
+      100% { background-position: 400% }
+    }
+
+    .menu-footer {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .back-btn {
+      background-color: #FF6F61;
+      margin-top: 20px;
+    }
+
+    /* Full page blur overlay */
+    #blurred-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 2s ease-out;
+    }
+
+    #gif {
+      max-width: 80%;
+      max-height: 80%;
+      animation: fadeIn 0.5s ease-in-out; /* GIF fade-in animation */
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Menu (Home Menu) -->
+  <div class="menu-container" id="homeMenu">
+    <div class="menu-header" id="menuHeader">
+      <div class="menu-title">Soloo Menu V1</div>
+      <button class="close-btn" onclick="document.getElementById('homeMenu').style.display='none';">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <!-- FPS Counter Below Soloo Menu V1 Title -->
+    <div class="fps-counter" id="fpsCounter">FPS: 0</div>
+
+    <div class="menu">
+      <button onclick="openAdminMenu()">
+        <i class="fas fa-cogs"></i> Player Mods
+      </button>
+    </div>
+    <div class="menu-footer">
+      <small>made with 💖 by soloo</small>
+    </div>
+  </div>
+
+  <!-- Admin Menu (Ban, Kick, Freeze Menu) -->
+  <div class="menu-container hidden" id="adminMenu">
+    <div class="menu-header" id="adminMenuHeader">
+      <div class="menu-title">Player Mods</div>
+      <button class="close-btn" onclick="closeAdminMenu()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <!-- FPS Counter Below Admin Menu Title -->
+    <div class="fps-counter" id="adminFPSCounter">FPS: 0</div>
+
+    <div class="menu">
+      <button onclick="banPlayer()">
+        <i class="fas fa-ban"></i> Ban
+      </button>
+      <button onclick="kickPlayer()">
+        <i class="fas fa-user-slash"></i> Kick
+      </button>
+      <button onclick="freezePlayer()">
+        <i class="fas fa-snowflake"></i> Freeze
+      </button>
+      <!-- Back Button -->
+      <button class="back-btn" onclick="closeAdminMenu()">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+    </div>
+    <div class="menu-footer">
+      <small>made with 💖 by soloo</small>
+    </div>
+  </div>
+
+  <!-- Full page blur overlay with GIF -->
+  <div id="blurred-overlay">
+    <img src="https://assets.onecompiler.app/43fw98db5/43ggte77w/solos.gif" alt="Loading GIF" id="gif">
+  </div>
+
+  <!-- Include Socket.io library -->
+  <script src="https://cdn.socket.io/4.1.3/socket.io.min.js"></script>
+  
+  <script>
+    // FPS Calculation Logic
+    let lastTime = 0;
+    let fps = 0;
+    let frameCount = 0;
+
+    function updateFPS(timestamp) {
+      if (lastTime === 0) {
+        lastTime = timestamp;
+      }
+      frameCount++;
+
+      if (timestamp - lastTime >= 1000) {
+        fps = frameCount;
+        document.getElementById('fpsCounter').innerText = `FPS: ${fps}`;
+        document.getElementById('adminFPSCounter').innerText = `FPS: ${fps}`;
+        frameCount = 0;
+        lastTime = timestamp;
+      }
+
+      requestAnimationFrame(updateFPS);
+    }
+
+    // Start the FPS calculation
+    requestAnimationFrame(updateFPS);
+
+    // Connecting to WebSocket server
+    const socket = io();  // This connects to the server running on the same host
+
+    // Action Functions for Buttons
+    function banPlayer() {
+      alert('Player has been banned.');
+      socket.emit('ban', { playerId: 'player123' });  // Example: replace with actual player ID
+      console.log("Player banned.");
+    }
+
+    function kickPlayer() {
+      alert('Player has been kicked.');
+      socket.emit('kick', { playerId: 'player123' });  // Example: replace with actual player ID
+      console.log("Player kicked.");
+    }
+
+    function freezePlayer() {
+      alert('Player has been frozen.');
+      socket.emit('freeze', { playerId: 'player123' });  // Example: replace with actual player ID
+      console.log("Player frozen.");
+    }
+
+    // Drag functionality for the menus
+    const homeMenu = document.getElementById("homeMenu");
+    const adminMenu = document.getElementById("adminMenu");
+    const menuHeader = document.getElementById("menuHeader");
+    const adminMenuHeader = document.getElementById("adminMenuHeader");
+    let offsetX = 0, offsetY = 0, isDragging = false;
+
+    // Drag Home Menu
+    menuHeader.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      offsetX = e.clientX - homeMenu.offsetLeft;
+      offsetY = e.clientY - homeMenu.offsetTop;
+      menuHeader.style.cursor = "grabbing";
+    });
+
+    // Drag Admin Menu
+    adminMenuHeader.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      offsetX = e.clientX - adminMenu.offsetLeft;
+      offsetY = e.clientY - adminMenu.offsetTop;
+      adminMenuHeader.style.cursor = "grabbing";
+    });
+
+    // Stop Dragging
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+      menuHeader.style.cursor = "grab";
+      adminMenuHeader.style.cursor = "grab";
+    });
+
+    // Move the menus
+    document.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        if (homeMenu.style.display !== "none") {
+          homeMenu.style.left = `${e.clientX - offsetX}px`;
+          homeMenu.style.top = `${e.clientY - offsetY}px`;
+        } else if (adminMenu.style.display !== "none") {
+          adminMenu.style.left = `${e.clientX - offsetX}px`;
+          adminMenu.style.top = `${e.clientY - offsetY}px`;
+        }
+      }
+    });
+
+    // Open Admin Menu
+    function openAdminMenu() {
+      homeMenu.style.display = 'none';
+      adminMenu.style.display = 'block';
+    }
+
+    // Close Admin Menu
+    function closeAdminMenu() {
+      adminMenu.style.display = 'none';
+      homeMenu.style.display = 'block';
+    }
+
+    // Fade out the overlay after 2 seconds
+    window.onload = function() {
+      setTimeout(function() {
+        const overlay = document.getElementById('blurred-overlay');
+        overlay.style.opacity = '0';  // Fade out the overlay
+        setTimeout(function() {
+          overlay.style.display = 'none';  // Remove the overlay after it fades out
+        }, 2000);  // After 2 seconds (for fading)
+      }, 2000);  // Wait 2 seconds before starting the fade
+    };
+  </script>
+
+</body>
+</html>
